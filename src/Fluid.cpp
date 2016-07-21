@@ -46,7 +46,7 @@ void Fluid::hashParticles(ngl::Vec3 _position, float _sl)
   int y = (int)pos.m_y;
   int z = (int)pos.m_z;
 
-  int table_size = 52438387;//findNextPrime(2 * m_total_num_particles);
+  int table_size = findNextPrime(2 * m_total_num_particles);
 
   int p1 = 73856093;
   int p2 = 19349663;
@@ -64,12 +64,14 @@ int Fluid::findNextPrime(int _num)
   while(!found)
   {
     next_prime++;
+    std::cout<<"before is prime is called"<<std::endl;
     if(isPrime(next_prime))
     {
+      std::cout<<"the next prime was found after "<< next_prime - _num <<" iterations"<<std::endl;
       found = true;
     }
   }
-
+  std::cout<<"end of while loop"<<std::endl;
   return next_prime;
 }
 
