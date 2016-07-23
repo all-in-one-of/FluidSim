@@ -4,6 +4,7 @@
 #include <time.h>
 #include <random>
 #include <cmath>
+#include <SHash.h>
 
 
 Fluid::Fluid()
@@ -90,11 +91,11 @@ void Fluid::fillHashTable()
   {
     ngl::Vec3 pos = m_particle_emitter.m_particles[i].m_position;
     int hash_key = createHashKey(pos);
-    m_hash_table.insert(std::pair<int, ngl::Vec3>(hash_key, pos));
+    m_hash_table.insert(std::pair<int, Particle>(hash_key, m_particle_emitter.m_particles[i]));
   }
 
    std::cout<<"Map size = "<<m_hash_table.size()<<std::endl;
-   std::multimap<int, ngl::Vec3>::iterator it = m_hash_table.begin();
+   std::multimap<int, Particle>::iterator it = m_hash_table.begin();
    while(it != m_hash_table.end())
    {
      //std::cout<<"Key = "<<it->first<<"    Value = ("<<it->second.m_x<<", "<<it->second.m_y<<", "<<it->second.m_z<<")"<<std::endl;
@@ -151,6 +152,9 @@ void Fluid::setCell()
 
 void Fluid::Update()
 {
+//  shash::emptyHashTable(m_hash_table);
+//  shash::fillHashTable(m_hash_table, m_total_num_particles, m_particle_emitter.m_particles, m_sl);
+
   emptyHashTable();
   fillHashTable();
   //findNeighbours();
