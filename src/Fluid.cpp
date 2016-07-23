@@ -20,9 +20,10 @@ Fluid::~Fluid()
 void Fluid::Initialize()
 {
 
-  m_total_num_particles = 10000;
+  m_total_num_particles = 100;
   m_hashtable_size = findNextPrime(2* m_total_num_particles);
   m_particle_emitter.Initialize(m_total_num_particles, ngl::Vec3(0, 0, 0), 30, ngl::Vec3(0, 0, 0), 1.0, 0.1, 0.3);
+  //shash::fillHashTable(m_hash_table, m_total_num_particles, m_particle_emitter.m_particles, m_sl);
   fillHashTable();
   //findNeighbours();
 }
@@ -94,13 +95,15 @@ void Fluid::fillHashTable()
     m_hash_table.insert(std::pair<int, Particle>(hash_key, m_particle_emitter.m_particles[i]));
   }
 
-   std::cout<<"Map size = "<<m_hash_table.size()<<std::endl;
-   std::multimap<int, Particle>::iterator it = m_hash_table.begin();
-   while(it != m_hash_table.end())
-   {
-     //std::cout<<"Key = "<<it->first<<"    Value = ("<<it->second.m_x<<", "<<it->second.m_y<<", "<<it->second.m_z<<")"<<std::endl;
-     it++;
-   }
+   //std::cout<<"Map size = "<<m_hash_table.size()<<std::endl;
+//   std::multimap<int, Particle>::iterator it = m_hash_table.begin();
+//   while(it != m_hash_table.end())
+//   {
+//     std::cout<<"Key = "<<it->first<<"    Value = ("<<it->second.m_position.m_x<<", "
+//                                                    <<it->second.m_position.m_y<<", "
+//                                                    <<it->second.m_position.m_z<<")"<<std::endl;
+//     it++;
+//   }
 }
 
 void Fluid::emptyHashTable()
@@ -113,13 +116,12 @@ void Fluid::emptyHashTable()
 
 void Fluid::findNeighbours()
 {
-  ngl::Vec3 test_pos;
   ngl::Vec3 smooth_length = ngl::Vec3(m_sl, m_sl, m_sl)*ngl::Vec3(m_sl, m_sl, m_sl);
   //std::cout<<"smooth length: ("<<smooth_length.m_x<<", "<<smooth_length.m_y<<", "<<smooth_length.m_z<<")"<<std::endl;
-//  for(int i = 0; i < m_total_num_particles; i++)
-//  {
-    ngl::Vec3 bmin = m_particle_emitter.m_particles[1].m_position - smooth_length;
-    ngl::Vec3 bmax = m_particle_emitter.m_particles[1].m_position + smooth_length;
+  for(int i = 0; i < m_total_num_particles; i++)
+  {
+    ngl::Vec3 bmin = m_particle_emitter.m_particles[i].m_position - smooth_length;
+    ngl::Vec3 bmax = m_particle_emitter.m_particles[i].m_position + smooth_length;
 
     for(ngl::Real i = bmin.m_x; i < bmax.m_x; i + m_sl)
     {
@@ -127,7 +129,7 @@ void Fluid::findNeighbours()
       {
         for(ngl::Real k = bmin.m_z; k < bmax.m_z; k + m_sl)
         {
-          test_pos = ngl::Vec3(i,j,k);
+          ngl::Vec3 test_pos = ngl::Vec3(i,j,k);
           int test_key = createHashKey(test_pos);
           //std::cout<<"test key: "<<test_key<<std::endl;
           //std::cout<<"num neighbours in key: "<<m_hash_table.count(test_key)<<std::endl;
@@ -135,7 +137,7 @@ void Fluid::findNeighbours()
       }
     }
 
-  //}
+  }
 
 }
 
@@ -152,8 +154,8 @@ void Fluid::setCell()
 
 void Fluid::Update()
 {
-//  shash::emptyHashTable(m_hash_table);
-//  shash::fillHashTable(m_hash_table, m_total_num_particles, m_particle_emitter.m_particles, m_sl);
+  //shash::emptyHashTable(m_hash_table);
+  //shash::fillHashTable(m_hash_table, m_total_num_particles, m_particle_emitter.m_particles, m_sl);
 
   emptyHashTable();
   fillHashTable();

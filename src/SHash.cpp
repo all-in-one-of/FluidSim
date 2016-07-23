@@ -5,11 +5,8 @@
 #include <random>
 #include <cmath>
 
-namespace shash {
 
-
-
-int createHashKey(ngl::Vec3 _position, ngl::Real _sl, int _hashtable_size)
+int shash::createHashKey(ngl::Vec3 _position, ngl::Real _sl, int _hashtable_size)
 {
   //  This function performs the spacial hashing of particles to a multimap.
   //  _position is a particle position, and _sl is the smoothing length
@@ -33,7 +30,7 @@ int createHashKey(ngl::Vec3 _position, ngl::Real _sl, int _hashtable_size)
   return hash_key;
 }
 
-int findNextPrime(int _num)
+int shash::findNextPrime(int _num)
 {
   int next_prime = _num;
   bool found = false;
@@ -50,7 +47,7 @@ int findNextPrime(int _num)
   return next_prime;
 }
 
-bool isPrime(int _num)
+bool shash::isPrime(int _num)
 {
   for(int i = 2; i <= _num/2; i++)
   {
@@ -61,7 +58,7 @@ bool isPrime(int _num)
   return true;
 }
 
-void fillHashTable(std::multimap<int,Particle> _hash_table, int _total_num_particles, std::vector<Particle> _particles, ngl::Real _sl)
+void shash::fillHashTable(std::multimap<int,Particle>& _hash_table, int _total_num_particles, std::vector<Particle>& _particles, ngl::Real _sl)
 {
   for(int i = 0; i < _total_num_particles; i++)
   {
@@ -71,7 +68,7 @@ void fillHashTable(std::multimap<int,Particle> _hash_table, int _total_num_parti
     _hash_table.insert(std::pair<int, Particle>(hash_key, _particles[i]));
   }
 
-//   std::cout<<"Map size = "<<_hash_table.size()<<std::endl;
+   //std::cout<<"Map size = "<<_hash_table.size()<<std::endl;
 //   std::multimap<int, Particle>::iterator it = _hash_table.begin();
 //   while(it != _hash_table.end())
 //   {
@@ -80,7 +77,7 @@ void fillHashTable(std::multimap<int,Particle> _hash_table, int _total_num_parti
 //   }
 }
 
-void emptyHashTable(std::multimap<int,Particle> _hash_table)
+void shash::emptyHashTable(std::multimap<int,Particle>& _hash_table)
 {
   while (!_hash_table.empty())
   {
@@ -88,5 +85,4 @@ void emptyHashTable(std::multimap<int,Particle> _hash_table)
   }
 }
 
-}
 
