@@ -13,7 +13,7 @@ void Emitter::Initialize(float _num_particles,  ngl::Vec3 _initial_pos, float _r
   for(int i = 0; i < _num_particles; i++)
   {
 
-     float mass = _mass + static_cast <float>(rand())/static_cast<float> (RAND_MAX/_variance);
+     //float mass = _mass + static_cast <float>(rand())/static_cast<float> (RAND_MAX/_variance);
      ngl::Real theta_rand = 0 + static_cast <float>(rand())/static_cast<float> (RAND_MAX/(M_PI*2));
      float radius_rand = static_cast <float>(rand())/static_cast<float> (RAND_MAX/(_range));
 
@@ -25,7 +25,7 @@ void Emitter::Initialize(float _num_particles,  ngl::Vec3 _initial_pos, float _r
     p.setPosition(init_pos);
     p.setInitPosition(init_pos);
     p.setLifespan(_lifespan);
-    p.setMass(mass);
+    p.setMass(_mass);
     p.setVelocity(_initial_vel);
     p.setInitVelocity(_initial_vel);
     m_particles.push_back(p);
@@ -36,7 +36,7 @@ void Emitter::Initialize(float _num_particles,  ngl::Vec3 _initial_pos, float _r
 
 void Emitter::Emit()
 {
-  float particlesPF = 400;
+  float particlesPF = 100;
   if(m_current_time > m_last_emission + m_emission_rate)
   {
     int active_particles = 0;

@@ -4,7 +4,9 @@
 #include <ngl/Vec3.h>
 #include <vector>
 #include <iostream>
+#include <map>
 #include "ngl/VertexArrayObject.h"
+
 
 #include "Emitter.h"
 
@@ -15,10 +17,12 @@ public:
   ~Fluid();
   void Initialize();
   void setFluidTimestep(float _timestep);
-  void hashParticles(ngl::Vec3 _position, float _sl);
+  int createHashKey(ngl::Vec3 _position);
   int findNextPrime(int _num);
   bool isPrime(int _num);
   void fillHashTable();
+  void emptyHashTable();
+  void findNeighbours();
   void Update();
   void Delete();
   void Reset();
@@ -35,7 +39,11 @@ public:
 private:
   Emitter m_particle_emitter;
   int m_total_num_particles;
+  int m_hashtable_size;
   float m_dt;
+  ngl::Real m_sl = 1;
+
+  std::multimap<int,ngl::Vec3> m_hash_table;
 //  ngl::Vec3 m_position;
 //  ngl::Vec3 m_velocity;
 //  ngl::Vec3 m_init_velocity;

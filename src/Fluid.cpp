@@ -4,7 +4,6 @@
 #include <time.h>
 #include <random>
 #include <cmath>
-//#include <ngl/NGLInit.h>
 
 
 Fluid::Fluid()
@@ -19,8 +18,12 @@ Fluid::~Fluid()
 
 void Fluid::Initialize()
 {
-  m_total_num_particles = 100000;
-  m_particle_emitter.Initialize(m_total_num_particles, ngl::Vec3(0, 0, 0), 30, ngl::Vec3(0, 0, 0), 9, 0.1, 0.3);
+
+  m_total_num_particles = 10000;
+  m_hashtable_size = findNextPrime(2* m_total_num_particles);
+  m_particle_emitter.Initialize(m_total_num_particles, ngl::Vec3(0, 0, 0), 30, ngl::Vec3(0, 0, 0), 1.0, 0.1, 0.3);
+  fillHashTable();
+  //findNeighbours();
 }
 
 void Fluid::setFluidTimestep(float _dt)
@@ -29,31 +32,28 @@ void Fluid::setFluidTimestep(float _dt)
   m_particle_emitter.setTimestep(m_dt);
 }
 
-void Fluid::hashParticles(ngl::Vec3 _position, float _sl)
+int Fluid::createHashKey(ngl::Vec3 _position)
 {
   //  This function performs the spacial hashing of particles to a multimap.
   //  _position is a particle position, and _sl is the smoothing length
 
-  //std::cout<<"ngl Vec3 particle position: ("<<_position.m_x<<","<<_position.m_y<<","<<_position.m_z<<")"<<std::endl;
   ngl::Vec3 pos = _position;
 
   //  X(x) = ([Xx/l], [Xy/l], [Xz/l])
-  pos /= _sl;
-  //std::cout<<"particle position after / smoothing length: ("<<pos.m_x<<","<<pos.m_y<<","<<pos.m_z<<")"<<std::endl;
+  pos /= m_sl;
 
   //casting the (x,y,z) to integers rounds down to next integer
   int x = (int)pos.m_x;
   int y = (int)pos.m_y;
   int z = (int)pos.m_z;
 
-  int table_size = findNextPrime(2 * m_total_num_particles);
-
   int p1 = 73856093;
   int p2 = 19349663;
   int p3 = 83492791;
 
-  int hash_key = (x*p1 ^ y*p2 ^ z*p3)%table_size;
+  int hash_key = abs((x*p1 ^ y*p2 ^ z*p3)%m_hashtable_size);
 
+  return hash_key;
 }
 
 int Fluid::findNextPrime(int _num)
@@ -64,14 +64,12 @@ int Fluid::findNextPrime(int _num)
   while(!found)
   {
     next_prime++;
-    std::cout<<"before is prime is called"<<std::endl;
     if(isPrime(next_prime))
     {
-      std::cout<<"the next prime was found after "<< next_prime - _num <<" iterations"<<std::endl;
       found = true;
     }
   }
-  std::cout<<"end of while loop"<<std::endl;
+
   return next_prime;
 }
 
@@ -82,17 +80,62 @@ bool Fluid::isPrime(int _num)
     if(_num % i == 0)
       return false;
   }
+
   return true;
 }
 
 void Fluid::fillHashTable()
 {
-  #pragma omp parallel for
   for(int i = 0; i < m_total_num_particles; i++)
   {
     ngl::Vec3 pos = m_particle_emitter.m_particles[i].m_position;
-    hashParticles(pos, 1);
+    int hash_key = createHashKey(pos);
+    m_hash_table.insert(std::pair<int, ngl::Vec3>(hash_key, pos));
   }
+
+   std::cout<<"Map size = "<<m_hash_table.size()<<std::endl;
+   std::multimap<int, ngl::Vec3>::iterator it = m_hash_table.begin();
+   while(it != m_hash_table.end())
+   {
+     //std::cout<<"Key = "<<it->first<<"    Value = ("<<it->second.m_x<<", "<<it->second.m_y<<", "<<it->second.m_z<<")"<<std::endl;
+     it++;
+   }
+}
+
+void Fluid::emptyHashTable()
+{
+  while (!m_hash_table.empty())
+  {
+    m_hash_table.erase(m_hash_table.begin());
+  }
+}
+
+void Fluid::findNeighbours()
+{
+  ngl::Vec3 test_pos;
+  ngl::Vec3 smooth_length = ngl::Vec3(m_sl, m_sl, m_sl)*ngl::Vec3(m_sl, m_sl, m_sl);
+  //std::cout<<"smooth length: ("<<smooth_length.m_x<<", "<<smooth_length.m_y<<", "<<smooth_length.m_z<<")"<<std::endl;
+//  for(int i = 0; i < m_total_num_particles; i++)
+//  {
+    ngl::Vec3 bmin = m_particle_emitter.m_particles[1].m_position - smooth_length;
+    ngl::Vec3 bmax = m_particle_emitter.m_particles[1].m_position + smooth_length;
+
+    for(ngl::Real i = bmin.m_x; i < bmax.m_x; i + m_sl)
+    {
+      for(ngl::Real j = bmin.m_y; j < bmax.m_y; j + m_sl)
+      {
+        for(ngl::Real k = bmin.m_z; k < bmax.m_z; k + m_sl)
+        {
+          test_pos = ngl::Vec3(i,j,k);
+          int test_key = createHashKey(test_pos);
+          //std::cout<<"test key: "<<test_key<<std::endl;
+          //std::cout<<"num neighbours in key: "<<m_hash_table.count(test_key)<<std::endl;
+        }
+      }
+    }
+
+  //}
+
 }
 
 void Fluid::Delete()
@@ -108,6 +151,9 @@ void Fluid::setCell()
 
 void Fluid::Update()
 {
+  emptyHashTable();
+  fillHashTable();
+  //findNeighbours();
   m_particle_emitter.Update();
 }
 

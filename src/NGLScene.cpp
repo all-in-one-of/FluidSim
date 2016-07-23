@@ -110,8 +110,6 @@ void NGLScene::initializeGL()
 
   fluid.Initialize();
   fluid.setFluidTimestep((float)m_timerValue/1000.0f);
-  fluid.fillHashTable();
-
 }
 
 void NGLScene::timerEvent( QTimerEvent *_event)
