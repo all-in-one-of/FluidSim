@@ -13,9 +13,9 @@ public:
   void addForce(ngl::Vec3);
   void Reset();
   int findIntegerPosition(ngl::Vec3 _position, float _cell_size);
-  void hashFunction();
 
-  boost::tuple<int,int,int> test();
+  int getID(){return m_ID;}
+  void setID(int _ID){m_ID = _ID;}
 
   ngl::Vec3 getPosition(){return m_position;}
   void setPosition(ngl::Vec3 _position){m_position = _position;}
@@ -55,6 +55,7 @@ private:
   ngl::Vec3 m_init_velocity;
   ngl::Vec3 m_gravity;
   ngl::Vec3 m_colour;
+  int m_ID;
   float m_mass;
   float m_lifespan;
   float m_lifeleft;

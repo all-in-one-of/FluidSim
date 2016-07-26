@@ -43,7 +43,7 @@ private:
   float m_dt;
   ngl::Real m_sl = 1;
 
-  std::multimap<int,Particle> m_hash_table;
+  std::multimap<int,Particle*> m_hash_table;
 //  ngl::Vec3 m_position;
 //  ngl::Vec3 m_velocity;
 //  ngl::Vec3 m_init_velocity;
