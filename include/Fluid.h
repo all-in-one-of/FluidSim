@@ -9,6 +9,7 @@
 
 
 #include "Emitter.h"
+#include "Boundary.h"
 
 class Fluid
 {
@@ -38,6 +39,7 @@ public:
 
 private:
   Emitter m_particle_emitter;
+  Boundary m_bbox;
   int m_total_num_particles;
   int m_hashtable_size;
   float m_dt;

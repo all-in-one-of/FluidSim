@@ -17,7 +17,6 @@ public:
   float getTimestep(){return m_dt;}
   void setTimestep(float _timestep){m_dt = _timestep;}
 
-  std::vector<Particle> getParticleList(){return m_particles;}
   std::vector<Particle> m_particles;
 
 private:

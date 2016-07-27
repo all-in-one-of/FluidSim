@@ -17,6 +17,9 @@ public:
   int getID(){return m_ID;}
   void setID(int _ID){m_ID = _ID;}
 
+  int getHashkey(){return m_hash_key;}
+  void setHashkey(int _key){m_hash_key = _key;}
+
   ngl::Vec3 getPosition(){return m_position;}
   void setPosition(ngl::Vec3 _position){m_position = _position;}
 
@@ -44,18 +47,19 @@ public:
   bool getActive(){return m_active;}
   void setActive(float _active){m_active = _active;}
 
-    ngl::Vec3 m_position;
-
+  ngl::Vec3 m_position;
+  std::vector<Particle*> m_neighbours;
 private:
 
-
+  int m_ID;
+  int m_hash_key;
   ngl::Vec3 m_velocity;
   ngl::Vec3 m_force;
   ngl::Vec3 m_init_position;
   ngl::Vec3 m_init_velocity;
   ngl::Vec3 m_gravity;
   ngl::Vec3 m_colour;
-  int m_ID;
+
   float m_mass;
   float m_lifespan;
   float m_lifeleft;

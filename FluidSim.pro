@@ -1,6 +1,10 @@
 # This specifies the exe name
 TARGET=FluidSim
 # where to put the .o files
+
+QMAKE_CXXFLAGS += -fopenmp
+QMAKE_LFLAGS += -fopenmp
+
 OBJECTS_DIR=obj
 # core Qt Libs to use add more here if needed.
 QT+=gui opengl core
@@ -23,7 +27,8 @@ SOURCES+= $$PWD/src/main.cpp \
           src/Cell.cpp \
           src/Grid.cpp \
     src/Fluid.cpp \
-    src/SHash.cpp
+    src/SHash.cpp \
+    src/Boundary.cpp
 # same for the .h files
 HEADERS+= $$PWD/include/NGLScene.h \
     include/Particle.h \
@@ -31,7 +36,8 @@ HEADERS+= $$PWD/include/NGLScene.h \
     include/Cell.h \
     include/Grid.h \
     include/Fluid.h \
-    include/SHash.h
+    include/SHash.h \
+    include/Boundary.h
 # and add the include dir into the search path for Qt and make
 INCLUDEPATH +=./include
 # where our exe is going to live (root of project)
