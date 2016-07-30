@@ -15,38 +15,34 @@ Particle::Particle(bool _active)
   m_colour = ngl::Vec3(0.0,0.5,1.0);
 }
 
-int Particle::findIntegerPosition(ngl::Vec3 _position, float _cell_size)
+void Particle::calculateDensity()
 {
-//  This function forms part of the spacial hashing algorithm,
-//  it takes in a vec3 and returns the discretized x,y and z values:
-//  X(x) = ([Xx/l], [Xy/l], [Xz/l])
+  for(int i = 0; i < m_neighbours.size(); i++)
+  {
+    ngl::Vec3 distance_vector =  m_position - m_neighbours[i]->m_position;
+    float distance = distance_vector.lengthSquared();
+    m_density +=  m_neighbours[i]->m_mass * WDefault(distance, 1.0f);
 
-  ngl::Vec3 pos = _position;
-  pos /= _cell_size;
-
-  int x = (int)pos.m_x;
-  int y = (int)pos.m_y;
-  int z = (int)pos.m_z;
-
-  return x, y, z;
+    m_pressure = k_pressure*(m_density - m_rest_density);
+  }
 }
 
-//void Particle::hashFunction(ngl::Vec3 _position, float _cell_size)
-//{
-//  //  This function forms part of the spacial hashing algorithm,
-//  //  it takes in a vec3 and returns the discretized x,y and z values:
-//  //  X(x) = ([Xx/l], [Xy/l], [Xz/l])
-
-//    ngl::Vec3 pos = _position;
-//    pos /= _cell_size;
-
-//    int x = (int)pos.m_x;
-//    int y = (int)pos.m_y;
-//    int z = (int)pos.m_z;
-//}
+void Particle::calculatePressure()
+{
+  for(int i = 0; i < m_neighbours.size(); i++)
+  {
+    ngl::Vec3 distance_vector =  m_position - m_neighbours[i]->m_position;
+    float distance = distance_vector.lengthSquared();
+    m_pressure_force += m_neighbours[i]->m_mass * ((m_pressure + m_neighbours[i]->m_pressure)/(2 * m_neighbours[i]->m_density)) * pressureKernel(distance, 1);
+  }
+}
 
 void Particle::Update(float _timestep)
 {
+    calculateDensity();
+    //std::cout<<"density: "<<m_density.m_x<<","<<m_density.m_y<<","<<m_density.m_z<<std::endl;
+    calculatePressure();
+    m_force += m_pressure_force;
     m_force += m_gravity;
     //m_force += -0.6f * m_velocity;
     //drag

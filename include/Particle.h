@@ -12,7 +12,11 @@ public:
   void Update(float _timestep);
   void addForce(ngl::Vec3);
   void Reset();
-  int findIntegerPosition(ngl::Vec3 _position, float _cell_size);
+  float WDefault(float _r, float _sl){return 315.0f/(64.0f * PI * pow(_sl, 9)) * pow(_sl*_sl-_r, 3);}
+  float pressureKernel(float r, float _sl){ return -45.0f/(PI * pow(_sl, 6)) * (_sl-r) * (_sl-r); }
+  void calculateDensity();
+  void calculatePressure();
+
 
   int getID(){return m_ID;}
   void setID(int _ID){m_ID = _ID;}
@@ -48,18 +52,27 @@ public:
   void setActive(float _active){m_active = _active;}
 
   ngl::Vec3 m_position;
+  ngl::Vec3 m_velocity;
+  ngl::Vec3 m_pressure;
+  ngl::Vec3 m_density;
   std::vector<Particle*> m_neighbours;
+
 private:
 
+  const float m_rest_density = 1000.0f;
+  const float k_pressure = 1000.0f;
   int m_ID;
   int m_hash_key;
-  ngl::Vec3 m_velocity;
+
   ngl::Vec3 m_force;
+
+  ngl::Vec3 m_pressure_force;
   ngl::Vec3 m_init_position;
   ngl::Vec3 m_init_velocity;
   ngl::Vec3 m_gravity;
   ngl::Vec3 m_colour;
 
+  float PI = 3.141592f;
   float m_mass;
   float m_lifespan;
   float m_lifeleft;

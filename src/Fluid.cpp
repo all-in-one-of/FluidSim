@@ -26,7 +26,7 @@ void Fluid::Initialize()
   m_bbox.Initialize(ngl::Vec3(0,0,0), 200);
   m_total_num_particles = 10000;
   m_hashtable_size = findNextPrime(2* m_total_num_particles);
-  m_particle_emitter.Initialize(m_total_num_particles, ngl::Vec3(0, 0, 0), 30, ngl::Vec3(0, 0, 0), 1000, 0.1, 0.3);
+  m_particle_emitter.Initialize(m_total_num_particles, ngl::Vec3(0, 0, 0), 30, ngl::Vec3(0, 0, 0), 1000, 0.1);
   //shash::fillHashTable(m_hash_table, m_total_num_particles, m_particle_emitter.m_particles, m_sl);
   fillHashTable();
   findNeighbours();
@@ -209,10 +209,8 @@ void Fluid::Update()
 #pragma omp parallel for
   for(int i = 0; i < m_total_num_particles; i++)
   {
-    if(m_bbox.checkForCollision(m_particle_emitter.m_particles[i].m_position))
-    {
-      m_particle_emitter.m_particles[i].setVelocity(ngl::Vec3(0,0,0));
-    }
+    m_bbox.collisionResponse(m_particle_emitter.m_particles[i].m_position,
+                             m_particle_emitter.m_particles[i].m_velocity, -0.2);
   }
   emptyHashTable();
   fillHashTable();

@@ -8,12 +8,10 @@ Emitter::Emitter()
 
 }
 
-void Emitter::Initialize(float _num_particles,  ngl::Vec3 _initial_pos, float _range, ngl::Vec3 _initial_vel, float _lifespan, float _mass, float _variance)
+void Emitter::Initialize(float _num_particles,  ngl::Vec3 _initial_pos, float _range, ngl::Vec3 _initial_vel, float _lifespan, float _mass)
 {
   for(int i = 0; i < _num_particles; i++)
   {
-
-     //float mass = _mass + static_cast <float>(rand())/static_cast<float> (RAND_MAX/_variance);
      ngl::Real theta_rand = 0 + static_cast <float>(rand())/static_cast<float> (RAND_MAX/(M_PI*2));
      float radius_rand = static_cast <float>(rand())/static_cast<float> (RAND_MAX/(_range));
 

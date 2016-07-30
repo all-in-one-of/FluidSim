@@ -61,6 +61,41 @@ bool Boundary::checkForCollision(ngl::Vec3& _pos)
          _pos.m_z > m_z_max || _pos.m_z < m_z_min);
 }
 
+void Boundary::collisionResponse(ngl::Vec3& _pos, ngl::Vec3& _vel, float _damper)
+{
+  //std::cout<<"test position: "<<_pos.m_x<<std::endl;
+  if(_pos.m_x > m_x_max)
+  {
+    _pos.m_x = m_x_max;
+    _vel.m_x *= _damper;
+  }
+  else if(_pos.m_x < m_x_min)
+  {
+    _pos.m_x = m_x_min;
+    _vel.m_x *= _damper;
+  }
+  else if(_pos.m_y > m_y_max)
+  {
+    _pos.m_y = m_y_max;
+    _vel.m_y *= _damper;
+  }
+  else if(_pos.m_y < m_y_min)
+  {
+    _pos.m_y = m_y_min;
+    _vel.m_y *= _damper;
+  }
+  else if(_pos.m_z > m_z_max)
+  {
+    _pos.m_z = m_z_max;
+    _vel.m_z *= _damper;
+  }
+  else if(_pos.m_z < m_z_min)
+  {
+    _pos.m_z = m_z_min;
+    _vel.m_z *= _damper;
+  }
+}
+
 void Boundary::Update(float _timestep)
 {
 

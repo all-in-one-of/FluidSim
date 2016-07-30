@@ -93,7 +93,7 @@ void NGLScene::initializeGL()
 
   shader->setShaderParam4f("Colour",1.0,1.0,0.0,1);
 
-  glPointSize(1);
+  glPointSize(2);
 
   m_timerValue = 15;
   startSimTimer();

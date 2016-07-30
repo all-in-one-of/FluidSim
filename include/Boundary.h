@@ -28,6 +28,7 @@ public:
   void setColour(ngl::Vec3 _colour){m_colour = _colour;}
 
   bool checkForCollision(ngl::Vec3& _pos);
+  void collisionResponse(ngl::Vec3& _pos, ngl::Vec3& _vel, float _damper);
 
   void setVAO();
 
