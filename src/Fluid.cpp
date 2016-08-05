@@ -23,10 +23,11 @@ Fluid::~Fluid()
 void Fluid::Initialize()
 {
 
-  m_bbox.Initialize(ngl::Vec3(0,0,0), 200);
+  m_bbox.Initialize(ngl::Vec3(0,0,0), 30);
   m_total_num_particles = 10000;
   m_hashtable_size = findNextPrime(2* m_total_num_particles);
-  m_particle_emitter.Initialize(m_total_num_particles, ngl::Vec3(0, 0, 0), 30, ngl::Vec3(0, 0, 0), 1000, 0.1);
+  m_particle_emitter.Initialize(m_total_num_particles, ngl::Vec3(-10, 0, 0), 8, ngl::Vec3(0, 0, 0), 999999, 0.1);
+  //m_particle_emitter.Emit();
   //shash::fillHashTable(m_hash_table, m_total_num_particles, m_particle_emitter.m_particles, m_sl);
   fillHashTable();
   findNeighbours();
@@ -163,9 +164,10 @@ void Fluid::findNeighbours()
             }
             if(!inlist)
             {
+              float INF  = 0.001f;
               ngl::Vec3 direction = m_particle_emitter.m_particles[i].m_position - it->second->m_position;
               float distance = direction.lengthSquared(); //sqrt((distance.m_x*distance.m_x) + (distance.m_y*distance.m_y) + (distance.m_z*distance.m_z));
-              if(distance < (m_sl*m_sl) && &m_particle_emitter.m_particles[i] != it->second)
+              if(distance < (m_sl*m_sl) && &m_particle_emitter.m_particles[i] != it->second && distance > INF)
               {
                 m_particle_emitter.m_particles[i].m_neighbours.push_back(it->second);
               }
@@ -206,16 +208,50 @@ void Fluid::Update()
   //shash::emptyHashTable(m_hash_table);
   //shash::fillHashTable(m_hash_table, m_total_num_particles, m_particle_emitter.m_particles, m_sl);
 
-#pragma omp parallel for
+  #pragma omp parallel for
   for(int i = 0; i < m_total_num_particles; i++)
   {
-    m_bbox.collisionResponse(m_particle_emitter.m_particles[i].m_position,
-                             m_particle_emitter.m_particles[i].m_velocity, -0.2);
+      m_particle_emitter.m_particles[i].ApplyExternalForces(m_dt);
   }
+
+  #pragma omp parallel for
+  for(int i = 0; i < m_total_num_particles; i++)
+  {
+      m_particle_emitter.m_particles[i].CalculateViscosity(m_dt, m_sl);
+  }
+
+  #pragma omp parallel for
+  for(int i = 0; i < m_total_num_particles; i++)
+  {
+    m_particle_emitter.m_particles[i].AdvanceParticles(m_dt);
+  }
+
   emptyHashTable();
   fillHashTable();
   findNeighbours();
-  m_particle_emitter.Update();
+
+  #pragma omp parallel for
+  for(int i = 0; i < m_total_num_particles; i++)
+  {
+    m_particle_emitter.m_particles[i].DoubleDensityRelaxation(m_dt, m_sl);
+  }
+
+
+////m_particle_emitter.Update();
+
+  #pragma omp parallel for
+  for(int i = 0; i < m_total_num_particles; i++)
+  {
+    m_particle_emitter.m_particles[i].UpdateVelocity(m_dt);
+  }
+
+  #pragma omp parallel for
+  for(int i = 0; i < m_total_num_particles; i++)
+  {
+    m_bbox.collisionResponse(m_particle_emitter.m_particles[i].m_position,
+                             m_particle_emitter.m_particles[i].m_velocity, -0.6);
+  }
+
 
 }
 

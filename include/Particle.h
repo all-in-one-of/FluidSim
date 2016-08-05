@@ -9,13 +9,20 @@ class Particle
 {
 public:
   Particle(bool _active);
+
+  void ApplyExternalForces(float _timestep);
+  void CalculateViscosity(float _timestep, float _h);
+  void AdvanceParticles(float _timestep);
+  void DoubleDensityRelaxation(float _timestep, float _h);
+  void UpdateVelocity(float _timestep);
+
   void Update(float _timestep);
   void addForce(ngl::Vec3);
   void Reset();
   float WDefault(float _r, float _sl){return 315.0f/(64.0f * PI * pow(_sl, 9)) * pow(_sl*_sl-_r, 3);}
-  float pressureKernel(float r, float _sl){ return -45.0f/(PI * pow(_sl, 6)) * (_sl-r) * (_sl-r); }
-  void calculateDensity();
-  void calculatePressure();
+  float spiky(float r, float _sl){ return -45.0f/(PI * pow(_sl, 6)) * (_sl-r) * (_sl-r); }
+  void calculateDensityPressure();
+  void calculateForce();
 
 
   int getID(){return m_ID;}
@@ -53,30 +60,40 @@ public:
 
   ngl::Vec3 m_position;
   ngl::Vec3 m_velocity;
-  ngl::Vec3 m_pressure;
-  ngl::Vec3 m_density;
+  float m_pressure;
+  float m_near_pressure;
+  float m_near_density;
+  float m_density;
   std::vector<Particle*> m_neighbours;
+  float PI = 3.141592f;
+
+    bool m_active;
 
 private:
 
-  const float m_rest_density = 1000.0f;
-  const float k_pressure = 1000.0f;
+  const float m_rest_density = 1.0f;
+  const float k_pressure =  1.0f;
+  const float k_near_pressure = 3.0f;
+  const float k_linear_viscosity = 6.0f;
+  const float k_quadratic_viscosity = 7.0f;
+
   int m_ID;
   int m_hash_key;
 
   ngl::Vec3 m_force;
-
+  ngl::Vec3 m_prev_pos;
   ngl::Vec3 m_pressure_force;
   ngl::Vec3 m_init_position;
   ngl::Vec3 m_init_velocity;
   ngl::Vec3 m_gravity;
   ngl::Vec3 m_colour;
+  ngl::Vec3 m_acceleration;
 
-  float PI = 3.141592f;
+
   float m_mass;
   float m_lifespan;
   float m_lifeleft;
-  bool m_active;
+
 
 };
 #endif // PARTICLE_H

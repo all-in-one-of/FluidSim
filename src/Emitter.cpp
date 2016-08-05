@@ -13,13 +13,19 @@ void Emitter::Initialize(float _num_particles,  ngl::Vec3 _initial_pos, float _r
   for(int i = 0; i < _num_particles; i++)
   {
      ngl::Real theta_rand = 0 + static_cast <float>(rand())/static_cast<float> (RAND_MAX/(M_PI*2));
-     float radius_rand = static_cast <float>(rand())/static_cast<float> (RAND_MAX/(_range));
+     ngl::Real y_theta_rand = 0 + static_cast <float>(rand())/static_cast<float> (RAND_MAX/(M_PI*2));
 
-     ngl::Real x = ((float)cos(theta_rand))*radius_rand;
-     ngl::Real z = ((float)sin(theta_rand))*radius_rand;
-     ngl::Vec3 init_pos = ngl::Vec3(_initial_pos.m_x+x, _initial_pos.m_y,_initial_pos.m_z + z);
+     float x_radius_rand = static_cast <float>(rand())/static_cast<float> (RAND_MAX/(_range));
+     float y_radius_rand = static_cast <float>(rand())/static_cast<float> (RAND_MAX/(_range));
+     float z_radius_rand = static_cast <float>(rand())/static_cast<float> (RAND_MAX/(_range));
 
-    Particle p(false);
+
+//     ngl::Real x = ((float)cos(theta_rand))*radius_rand;
+//     ngl::Real z = ((float)sin(theta_rand))*radius_rand;
+//     ngl::Real y = ((float)cos(y_theta_rand))*radius_rand;
+     ngl::Vec3 init_pos = ngl::Vec3(_initial_pos.m_x + x_radius_rand, _initial_pos.m_y + y_radius_rand, _initial_pos.m_z + z_radius_rand);
+
+    Particle p(true);
     p.setPosition(init_pos);
     p.setInitPosition(init_pos);
     p.setLifespan(_lifespan);
@@ -47,10 +53,10 @@ void Emitter::Emit()
         active_particles += 1;
         m_particles[i].Reset();
 
-        if(active_particles >= particlesPF)
-        {
-          break;
-        }
+//        if(active_particles >= particlesPF)
+//        {
+//          break;
+//        }
         m_last_emission = m_current_time;
       }
     }
@@ -60,14 +66,14 @@ void Emitter::Emit()
 void Emitter::Update()
 {
   Emit();
-  for(int i = 0; i < m_particles.size(); i ++)
-  {
-    if(m_particles[i].getActive()==true)
-    {
-      m_particles[i].Update(m_dt);
-    }
-  }
-  m_current_time += m_dt;
+//  for(int i = 0; i < m_particles.size(); i ++)
+//  {
+//    if(m_particles[i].getActive()==true)
+//    {
+//      m_particles[i].Update(m_dt);
+//    }
+//  }
+//  m_current_time += m_dt;
 }
 
 void Emitter::Draw()

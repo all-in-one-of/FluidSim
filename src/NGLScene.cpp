@@ -64,7 +64,7 @@ void NGLScene::initializeGL()
   float grid_size = 200;
   float half_grid_size = grid_size*0.5;
 
-  ngl::Vec3 from(0, 0, grid_size*2);
+  ngl::Vec3 from(0, 0, 80);
   ngl::Vec3 to(0,0,0);
   ngl::Vec3 up(0,1,0);
 
@@ -93,7 +93,7 @@ void NGLScene::initializeGL()
 
   shader->setShaderParam4f("Colour",1.0,1.0,0.0,1);
 
-  glPointSize(2);
+  glPointSize(3);
 
   m_timerValue = 15;
   startSimTimer();
