@@ -23,10 +23,11 @@ Fluid::~Fluid()
 void Fluid::Initialize()
 {
 
-  m_bbox.Initialize(ngl::Vec3(0,0,0), 30);
-  m_total_num_particles = 10000;
-  m_hashtable_size = findNextPrime(2* m_total_num_particles);
-  m_particle_emitter.Initialize(m_total_num_particles, ngl::Vec3(-10, 0, 0), 8, ngl::Vec3(0, 0, 0), 999999, 0.1);
+  m_bbox.Initialize(ngl::Vec3(0,0,0), 20);
+  m_total_num_particles = 40000;
+
+  m_particle_emitter.Initialize(m_total_num_particles, ngl::Vec3(-10, 0, 0), 10, ngl::Vec3(0, 0, 0), 999999, 0.1);
+    m_hashtable_size = findNextPrime(2* m_particle_emitter.m_particles.size());
   //m_particle_emitter.Emit();
   //shash::fillHashTable(m_hash_table, m_total_num_particles, m_particle_emitter.m_particles, m_sl);
   fillHashTable();
@@ -94,12 +95,15 @@ bool Fluid::isPrime(int _num)
 void Fluid::fillHashTable()
 {
 
-  for(int i = 0; i < m_total_num_particles; i++)
+  for(int i = 0; i < m_particle_emitter.m_particles.size(); i++)
   {
-    ngl::Vec3 pos = m_particle_emitter.m_particles[i].m_position;
-    int hash_key = createHashKey(pos);
-    m_particle_emitter.m_particles[i].setID(hash_key);
-    m_hash_table.insert(std::pair<int, Particle*>(hash_key, &m_particle_emitter.m_particles[i]));
+    if(m_particle_emitter.m_particles[i].getActive())
+    {
+      ngl::Vec3 pos = m_particle_emitter.m_particles[i].m_position;
+      int hash_key = createHashKey(pos);
+      m_particle_emitter.m_particles[i].setID(hash_key);
+      m_hash_table.insert(std::pair<int, Particle*>(hash_key, &m_particle_emitter.m_particles[i]));
+    }
   }
 
    //std::cout<<"Map size = "<<m_hash_table.size()<<std::endl;
@@ -129,51 +133,54 @@ void Fluid::findNeighbours()
   //std::cout<<"smooth length: ("<<smooth_length.m_x<<", "<<smooth_length.m_y<<", "<<smooth_length.m_z<<")"<<std::endl;
 
   #pragma omp parallel for
-  for(int i = 0; i < m_total_num_particles; i++)
+  for(int i = 0; i < m_particle_emitter.m_particles.size(); i++)
   {
-    m_particle_emitter.m_particles[i].m_neighbours.clear();
-    neighbours.clear();
-
-    ngl::Vec3 bmin = m_particle_emitter.m_particles[i].m_position - smooth_length;
-    ngl::Vec3 bmax = m_particle_emitter.m_particles[i].m_position + smooth_length;
-
-    for(ngl::Real x = bmin.m_x; x < bmax.m_x; x += m_sl)
+    if(m_particle_emitter.m_particles[i].getActive())
     {
-      for(ngl::Real y = bmin.m_y; y < bmax.m_y; y += m_sl)
+      m_particle_emitter.m_particles[i].m_neighbours.clear();
+      neighbours.clear();
+
+      ngl::Vec3 bmin = m_particle_emitter.m_particles[i].m_position - smooth_length;
+      ngl::Vec3 bmax = m_particle_emitter.m_particles[i].m_position + smooth_length;
+
+      for(ngl::Real x = bmin.m_x; x < bmax.m_x; x += m_sl)
       {
-        for(ngl::Real z = bmin.m_z; z < bmax.m_z; z += m_sl)
+        for(ngl::Real y = bmin.m_y; y < bmax.m_y; y += m_sl)
         {
-          ngl::Vec3 test_pos = ngl::Vec3(x,y,z);
-          int test_key = createHashKey(test_pos);
-
-          std::pair<std::multimap<int,Particle*>::iterator, std::multimap<int,Particle*>::iterator> ii;
-          std::multimap<int, Particle*>::iterator it;
-          ii = m_hash_table.equal_range(test_key);
-
-          for(it = ii.first; it != ii.second; ++it)
+          for(ngl::Real z = bmin.m_z; z < bmax.m_z; z += m_sl)
           {
-            bool inlist = false;
+            ngl::Vec3 test_pos = ngl::Vec3(x,y,z);
+            int test_key = createHashKey(test_pos);
 
-            for(int j = 0; j < m_particle_emitter.m_particles[i].m_neighbours.size(); j++)
+            std::pair<std::multimap<int,Particle*>::iterator, std::multimap<int,Particle*>::iterator> ii;
+            std::multimap<int, Particle*>::iterator it;
+            ii = m_hash_table.equal_range(test_key);
+
+            for(it = ii.first; it != ii.second; ++it)
             {
-              if(it->second == m_particle_emitter.m_particles[i].m_neighbours[j])
+              bool inlist = false;
+
+              for(int j = 0; j < m_particle_emitter.m_particles[i].m_neighbours.size(); j++)
               {
-                inlist = true;
-                j = m_particle_emitter.m_particles[i].m_neighbours.size();
+                if(it->second == m_particle_emitter.m_particles[i].m_neighbours[j])
+                {
+                  inlist = true;
+                  j = m_particle_emitter.m_particles[i].m_neighbours.size();
+                }
+              }
+              if(!inlist)
+              {
+                float INF  = 0.001f;
+                ngl::Vec3 direction = m_particle_emitter.m_particles[i].m_position - it->second->m_position;
+                float distance = direction.lengthSquared(); //sqrt((distance.m_x*distance.m_x) + (distance.m_y*distance.m_y) + (distance.m_z*distance.m_z));
+                if(distance < (m_sl*m_sl) && &m_particle_emitter.m_particles[i] != it->second && distance > INF)
+                {
+                  m_particle_emitter.m_particles[i].m_neighbours.push_back(it->second);
+                }
               }
             }
-            if(!inlist)
-            {
-              float INF  = 0.001f;
-              ngl::Vec3 direction = m_particle_emitter.m_particles[i].m_position - it->second->m_position;
-              float distance = direction.lengthSquared(); //sqrt((distance.m_x*distance.m_x) + (distance.m_y*distance.m_y) + (distance.m_z*distance.m_z));
-              if(distance < (m_sl*m_sl) && &m_particle_emitter.m_particles[i] != it->second && distance > INF)
-              {
-                m_particle_emitter.m_particles[i].m_neighbours.push_back(it->second);
-              }
-            }
+
           }
-
         }
       }
     }
@@ -208,21 +215,26 @@ void Fluid::Update()
   //shash::emptyHashTable(m_hash_table);
   //shash::fillHashTable(m_hash_table, m_total_num_particles, m_particle_emitter.m_particles, m_sl);
 
+  m_particle_emitter.Update();
+
   #pragma omp parallel for
-  for(int i = 0; i < m_total_num_particles; i++)
+  for(int i = 0; i < m_particle_emitter.m_particles.size(); i++)
   {
+    if(m_particle_emitter.m_particles[i].getActive())
       m_particle_emitter.m_particles[i].ApplyExternalForces(m_dt);
   }
 
   #pragma omp parallel for
-  for(int i = 0; i < m_total_num_particles; i++)
+  for(int i = 0; i < m_particle_emitter.m_particles.size(); i++)
   {
+    if(m_particle_emitter.m_particles[i].getActive())
       m_particle_emitter.m_particles[i].CalculateViscosity(m_dt, m_sl);
   }
 
   #pragma omp parallel for
-  for(int i = 0; i < m_total_num_particles; i++)
+  for(int i = 0; i < m_particle_emitter.m_particles.size(); i++)
   {
+    if(m_particle_emitter.m_particles[i].getActive())
     m_particle_emitter.m_particles[i].AdvanceParticles(m_dt);
   }
 
@@ -231,23 +243,23 @@ void Fluid::Update()
   findNeighbours();
 
   #pragma omp parallel for
-  for(int i = 0; i < m_total_num_particles; i++)
+  for(int i = 0; i < m_particle_emitter.m_particles.size(); i++)
   {
+    if(m_particle_emitter.m_particles[i].getActive())
     m_particle_emitter.m_particles[i].DoubleDensityRelaxation(m_dt, m_sl);
   }
 
-
-////m_particle_emitter.Update();
-
   #pragma omp parallel for
-  for(int i = 0; i < m_total_num_particles; i++)
+  for(int i = 0; i < m_particle_emitter.m_particles.size(); i++)
   {
+    if(m_particle_emitter.m_particles[i].getActive())
     m_particle_emitter.m_particles[i].UpdateVelocity(m_dt);
   }
 
   #pragma omp parallel for
-  for(int i = 0; i < m_total_num_particles; i++)
+  for(int i = 0; i < m_particle_emitter.m_particles.size(); i++)
   {
+    if(m_particle_emitter.m_particles[i].getActive() && m_particle_emitter.m_particles[i].m_ghost == false)
     m_bbox.collisionResponse(m_particle_emitter.m_particles[i].m_position,
                              m_particle_emitter.m_particles[i].m_velocity, -0.6);
   }

@@ -9,6 +9,19 @@ OBJECTS_DIR=obj
 # core Qt Libs to use add more here if needed.
 QT+=gui opengl core
 
+linux*:INCLUDEPATH+= /usr/local/alembic-1.5.8/include/
+linux*:LIBS+=-L/usr/local/alembic-1.5.8/lib/static
+
+
+linux*:LIBS+= -lAbcWFObjConvert         -lAlembicAbcCoreOgawa \
+-lAlembicAbc              -lAlembicAbcGeom \
+-lAlembicAbcCollection   -lAlembicAbcMaterial \
+-lAlembicAbcCoreAbstract  -lAlembicAbcOpenGL \
+-lAlembicAbcCoreFactory   -lAlembicOgawa \
+-lAlembicAbcCoreHDF5      -lAlembicUtil
+
+linux*:LIBS+=-L/usr/local/lib -lHalf
+
 # as I want to support 4.8 and 5 this will set a flag for some of the mac stuff
 # mainly in the types.h file for the setMacVisual which is native in Qt5
 isEqual(QT_MAJOR_VERSION, 5) {
@@ -40,6 +53,7 @@ HEADERS+= $$PWD/include/NGLScene.h \
     include/Boundary.h
 # and add the include dir into the search path for Qt and make
 INCLUDEPATH +=./include
+INCLUDEPATH+=/usr/local/include/OpenEXR
 # where our exe is going to live (root of project)
 DESTDIR=./
 # add the glsl shader files

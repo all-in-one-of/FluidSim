@@ -17,6 +17,7 @@ Particle::Particle(bool _active)
 
 void Particle::ApplyExternalForces(float _timestep)
 {
+  //if(!m_ghost)
   m_velocity += m_gravity * _timestep;
 }
 
@@ -49,7 +50,10 @@ void Particle::CalculateViscosity(float _timestep, float _h)
       {
         impulse.m_z /= 10000.0f;
       }
+      //if(!m_ghost)
       m_velocity -= impulse;
+
+      //if(!m_neighbours[i]->m_ghost)
       m_neighbours[i]->m_velocity += impulse;
     }
   }
@@ -57,8 +61,11 @@ void Particle::CalculateViscosity(float _timestep, float _h)
 
 void Particle::AdvanceParticles(float _timestep)
 {
-  m_prev_pos = m_position;
-  m_position += m_velocity * _timestep;
+  //if(!m_ghost)
+  //{
+    m_prev_pos = m_position;
+    m_position += m_velocity * _timestep;
+  //}
 //  m_position.m_z = 0;
 //  m_velocity.m_z = 0;
 }
@@ -94,6 +101,8 @@ void Particle::DoubleDensityRelaxation(float _timestep, float _h)
   // Pi_near = k_near * pi_near
   m_near_pressure = k_near_pressure * m_near_density;
 
+  //if(m_ghost)
+    //m_near_pressure = 100;
   if (m_pressure + m_near_pressure < 0.000001f || m_pressure + m_near_pressure > 1000000.0f)
   {
     m_pressure = 0;
@@ -123,18 +132,21 @@ void Particle::DoubleDensityRelaxation(float _timestep, float _h)
 
       ngl::Vec3 displacement = (_timestep * _timestep) * (m_pressure * q + m_near_pressure * (q * q)) * distance/magnitude;
 
-      m_neighbours[i]->m_position += displacement/2;
+      //if(!m_neighbours[i]->m_ghost)
+        m_neighbours[i]->m_position += displacement/2;
 
       dx -= displacement/2;
     }
   }
-  m_position += dx;
+  //if(!m_ghost)
+    m_position += dx;
 
 }
 
 void Particle::UpdateVelocity(float _timestep)
 {
-  m_velocity = (m_position - m_prev_pos) / _timestep;
+  //if(!m_ghost)
+    m_velocity = (m_position - m_prev_pos) / _timestep;
 }
 
 ngl::Vec3 pressureKernel(ngl::Vec3 r, float _sl)

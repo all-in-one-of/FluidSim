@@ -33,6 +33,7 @@ NGLScene::~NGLScene()
   std::cout<<"Shutting down NGL, removing VAO's and Shaders\n";
   //delete cell;
   m_grid.Delete();
+
 }
 
 void NGLScene::resizeGL(QResizeEvent *_event)

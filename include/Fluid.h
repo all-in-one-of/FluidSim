@@ -43,7 +43,7 @@ private:
   int m_total_num_particles;
   int m_hashtable_size;
   float m_dt;
-  ngl::Real m_sl = 0.8;
+  ngl::Real m_sl = 0.6;
 
   std::multimap<int,Particle*> m_hash_table;
 //  ngl::Vec3 m_position;

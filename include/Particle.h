@@ -34,6 +34,8 @@ public:
   ngl::Vec3 getPosition(){return m_position;}
   void setPosition(ngl::Vec3 _position){m_position = _position;}
 
+  void setPrevPosition(ngl::Vec3 _position){m_prev_pos = _position;}
+
   ngl::Vec3 getInitPosition(){return m_init_position;}
   void setInitPosition(ngl::Vec3 _position){m_init_position = _position;}
 
@@ -58,6 +60,8 @@ public:
   bool getActive(){return m_active;}
   void setActive(float _active){m_active = _active;}
 
+  void setGhost(float _ghost){m_ghost = _ghost;}
+
   ngl::Vec3 m_position;
   ngl::Vec3 m_velocity;
   float m_pressure;
@@ -67,15 +71,17 @@ public:
   std::vector<Particle*> m_neighbours;
   float PI = 3.141592f;
 
-    bool m_active;
+  bool m_active;
+  bool m_ghost;
+  ngl::Vec3 m_colour;
 
 private:
 
-  const float m_rest_density = 1.0f;
-  const float k_pressure =  1.0f;
+  const float m_rest_density = 4.0f;
+  const float k_pressure =  2.0f;
   const float k_near_pressure = 3.0f;
-  const float k_linear_viscosity = 6.0f;
-  const float k_quadratic_viscosity = 7.0f;
+  const float k_linear_viscosity = 3.0f;
+  const float k_quadratic_viscosity = 2.0f;
 
   int m_ID;
   int m_hash_key;
@@ -86,7 +92,7 @@ private:
   ngl::Vec3 m_init_position;
   ngl::Vec3 m_init_velocity;
   ngl::Vec3 m_gravity;
-  ngl::Vec3 m_colour;
+
   ngl::Vec3 m_acceleration;
 
 

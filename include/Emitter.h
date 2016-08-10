@@ -4,6 +4,9 @@
 #include <vector>
 #include "Particle.h"
 
+#include<Alembic/AbcGeom/All.h>
+#include<Alembic/AbcCoreOgawa/All.h>
+
 
 class Emitter
 {
@@ -13,6 +16,8 @@ public:
   void Emit();
   void Update();
   void Draw();
+  void toggleExport(){ m_export^=true;}
+
 
   float getTimestep(){return m_dt;}
   void setTimestep(float _timestep){m_dt = _timestep;}
@@ -27,6 +32,13 @@ private:
   float m_last_emission=0.0f;
   float m_dt;
   float m_current_time = 0.0;
+  bool m_export = true;
+
+  void exportFrame();
+  std::unique_ptr <Alembic::AbcGeom::OArchive> m_archive;
+  std::unique_ptr <Alembic::AbcGeom::OPoints> m_partsOut;
+  std::unique_ptr <Alembic::AbcGeom::OC4fArrayProperty> m_rgbOut;
+
 
 };
 
