@@ -23,10 +23,11 @@ Fluid::~Fluid()
 void Fluid::Initialize()
 {
 
-  m_bbox.Initialize(ngl::Vec3(0,0,0), 20);
-  m_total_num_particles = 40000;
+  m_bbox.Initialize(ngl::Vec3(0,0,0), 15, 10, 15);
+  m_sphere.Initialize(ngl::Vec3(0,-3,0), 2.0f);
+  m_total_num_particles = 2000;
 
-  m_particle_emitter.Initialize(m_total_num_particles, ngl::Vec3(-10, 0, 0), 10, ngl::Vec3(0, 0, 0), 999999, 0.1);
+  m_particle_emitter.Initialize(m_total_num_particles, ngl::Vec3(0, 5, 0), 3, ngl::Vec3(0, 0, 0), 999999, 0.1);
     m_hashtable_size = findNextPrime(2* m_particle_emitter.m_particles.size());
   //m_particle_emitter.Emit();
   //shash::fillHashTable(m_hash_table, m_total_num_particles, m_particle_emitter.m_particles, m_sl);
@@ -264,7 +265,18 @@ void Fluid::Update()
                              m_particle_emitter.m_particles[i].m_velocity, -0.6);
   }
 
+  #pragma omp parallel for
+  for(int i = 0; i < m_particle_emitter.m_particles.size(); i++)
+  {
+    if(m_particle_emitter.m_particles[i].getActive() && m_particle_emitter.m_particles[i].m_ghost == false)
+    m_sphere.checkForCollision(m_particle_emitter.m_particles[i].m_position,
+                             m_particle_emitter.m_particles[i].m_velocity);
+  }
 
+  //m_bbox.Update(m_dt, time);
+
+  time += m_dt;
+  //std::cout<<"time: "<<time<<std::endl;
 }
 
 void Fluid::Reset()

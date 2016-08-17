@@ -10,6 +10,7 @@
 
 #include "Emitter.h"
 #include "Boundary.h"
+#include "RBD.h"
 
 class Fluid
 {
@@ -31,19 +32,23 @@ public:
   void setVAO();
   void Draw();
 
+  float getTime(){return time;}
 //  struct data
 //  {
 //    ngl::Vec3 pos;
 //    ngl::Vec3 colour;
 //  };
-
+  float time = 0.0f;
 private:
   Emitter m_particle_emitter;
   Boundary m_bbox;
+  RBD m_sphere;
+
   int m_total_num_particles;
   int m_hashtable_size;
   float m_dt;
-  ngl::Real m_sl = 0.6;
+  ngl::Real m_sl = 0.6f;
+
 
   std::multimap<int,Particle*> m_hash_table;
 //  ngl::Vec3 m_position;

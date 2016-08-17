@@ -153,16 +153,16 @@ void Emitter::Initialize(float _num_particles,  ngl::Vec3 _initial_pos, float _r
      ngl::Real y_theta_rand = 0 + static_cast <float>(rand())/static_cast<float> (RAND_MAX/(M_PI*2));
 
      float x_radius_rand =  static_cast <float>(rand())/static_cast<float> (RAND_MAX/(_range/2));
-     float y_radius_rand =  static_cast <float>(rand())/static_cast<float> (RAND_MAX/(_range));
-     float z_radius_rand =  -_range + static_cast <float>(rand())/static_cast<float> (RAND_MAX/(_range*2));
+     float y_radius_rand =  static_cast <float>(rand())/static_cast<float> (RAND_MAX/(_range*1.2));
+     float z_radius_rand =  -_range + static_cast <float>(rand())/static_cast<float> (RAND_MAX/(_range/2));
 
 
      ngl::Real x = ((float)cos(theta_rand))*x_radius_rand;
      ngl::Real z = ((float)sin(theta_rand))*x_radius_rand;
      ngl::Real y = ((float)cos(y_theta_rand))*x_radius_rand;
-     ngl::Vec3 init_pos = ngl::Vec3(_initial_pos.m_x + x_radius_rand, _initial_pos.m_y+y_radius_rand, _initial_pos.m_z + z_radius_rand);
+     ngl::Vec3 init_pos = ngl::Vec3(_initial_pos.m_x + x, _initial_pos.m_y+y_radius_rand, _initial_pos.m_z + z);
 
-    Particle p(true);
+    Particle p(false);
     p.setGhost(false);
     p.setPosition(init_pos);
     p.setPrevPosition(init_pos);
@@ -189,7 +189,7 @@ void Emitter::Initialize(float _num_particles,  ngl::Vec3 _initial_pos, float _r
 
 void Emitter::Emit()
 {
-  float particlesPF = 100;
+  float particlesPF = 80;
   if(m_current_time > m_last_emission + m_emission_rate)
   {
     int active_particles = 0;
@@ -214,7 +214,7 @@ void Emitter::Emit()
 
 void Emitter::Update()
 {
-  //Emit();
+  Emit();
 //  for(int i = 0; i < m_particles.size(); i ++)
 //  {
 //    if(m_particles[i].getActive()==true)

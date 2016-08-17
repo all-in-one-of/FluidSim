@@ -11,8 +11,8 @@ class Boundary
 public:
   Boundary();
   ~Boundary();
-  void Initialize(ngl::Vec3 _position, ngl::Real _size);
-  void Update(float _timestep);
+  void Initialize(ngl::Vec3 _position, ngl::Real _width, ngl::Real _height, ngl::Real _depth);
+  void Update(float _timestep, float _time);
   void Delete();
   void Reset();
   void setCell();
@@ -20,9 +20,6 @@ public:
 
   ngl::Vec3 getPosition(){return m_position;}
   void setPosition(ngl::Vec3 _position){m_position = _position;}
-
-  ngl::Real getSize(){return m_size;}
-  void setSize(ngl::Real _size){ m_size = _size;}
 
   ngl::Vec3 getColour(){return m_colour;}
   void setColour(ngl::Vec3 _colour){m_colour = _colour;}
@@ -41,7 +38,9 @@ public:
 private:
   ngl::Vec3 m_position;
   ngl::Vec3 m_colour;
-  ngl::Real m_size;
+  ngl::Real m_width;
+  ngl::Real m_height;
+  ngl::Real m_depth;
   ngl::Real m_x_min;
   ngl::Real m_x_max;
 
@@ -50,6 +49,8 @@ private:
 
   ngl::Real m_z_min;
   ngl::Real m_z_max;
+  float m_resize_bbox = -0.03;
+  int counter = 0;
 
   ngl::VertexArrayObject *cube_vao;
 };

@@ -31,6 +31,7 @@ NGLScene::NGLScene(int _timer)
 NGLScene::~NGLScene()
 {
   std::cout<<"Shutting down NGL, removing VAO's and Shaders\n";
+  std::cout<<"time was: "<< fluid.getTime()<<std::endl;
   //delete cell;
   m_grid.Delete();
 
@@ -65,7 +66,7 @@ void NGLScene::initializeGL()
   float grid_size = 200;
   float half_grid_size = grid_size*0.5;
 
-  ngl::Vec3 from(0, 0, 80);
+  ngl::Vec3 from(0, 0, 30);
   ngl::Vec3 to(0,0,0);
   ngl::Vec3 up(0,1,0);
 

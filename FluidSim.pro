@@ -41,7 +41,8 @@ SOURCES+= $$PWD/src/main.cpp \
           src/Grid.cpp \
     src/Fluid.cpp \
     src/SHash.cpp \
-    src/Boundary.cpp
+    src/Boundary.cpp \
+    src/RBD.cpp
 # same for the .h files
 HEADERS+= $$PWD/include/NGLScene.h \
     include/Particle.h \
@@ -50,7 +51,8 @@ HEADERS+= $$PWD/include/NGLScene.h \
     include/Grid.h \
     include/Fluid.h \
     include/SHash.h \
-    include/Boundary.h
+    include/Boundary.h \
+    include/RBD.h
 # and add the include dir into the search path for Qt and make
 INCLUDEPATH +=./include
 INCLUDEPATH+=/usr/local/include/OpenEXR
