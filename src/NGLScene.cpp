@@ -18,7 +18,7 @@ const static float ZOOM=5.0;
 NGLScene::NGLScene(int _timer)
 {
   // re-size the widget to that of the parent (in this case the GLFrame passed in on construction)
-  setTitle("Fluid Simulation yay particles");
+  setTitle("Smooth Particle Hydrodynamics Dambreak Simulation");
 
   m_rotate=false;
   // mouse rotation values set to 0

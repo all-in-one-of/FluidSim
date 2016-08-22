@@ -78,10 +78,10 @@ public:
 private:
 
   const float m_rest_density = 8.0f;
-  const float k_pressure = 6.0f;
-  const float k_near_pressure = 7.0f;
-  const float k_linear_viscosity = 1.0f;
-  const float k_quadratic_viscosity = 0.5f;
+  const float k_pressure = 0.5f;
+  const float k_near_pressure = 1.0f;
+  const float k_linear_viscosity = 0.0f;
+  const float k_quadratic_viscosity = 2.0f;
 
   int m_ID;
   int m_hash_key;

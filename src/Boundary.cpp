@@ -76,11 +76,11 @@ void Boundary::collisionResponse(ngl::Vec3& _pos, ngl::Vec3& _vel, float _damper
     _pos.m_x = m_x_min;
     _vel.m_x *= _damper;
   }
-//  if(_pos.m_y > m_y_max)
-//  {
-//    _pos.m_y = m_y_max;
-//    _vel.m_y *= _damper;
-//  }
+  if(_pos.m_y > m_y_max)
+  {
+    _pos.m_y = m_y_max;
+    _vel.m_y *= _damper;
+  }
   if(_pos.m_y < m_y_min)
   {
     _pos.m_y = m_y_min;

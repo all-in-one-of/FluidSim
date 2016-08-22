@@ -23,11 +23,11 @@ Fluid::~Fluid()
 void Fluid::Initialize()
 {
 
-  m_bbox.Initialize(ngl::Vec3(0,0,0), 15, 10, 15);
+  m_bbox.Initialize(ngl::Vec3(0,0,0), 10, 10, 10);
   m_sphere.Initialize(ngl::Vec3(0,-3,0), 2.0f);
-  m_total_num_particles = 2000;
+  m_total_num_particles = 8000;
 
-  m_particle_emitter.Initialize(m_total_num_particles, ngl::Vec3(0, 5, 0), 3, ngl::Vec3(0, 0, 0), 999999, 0.1);
+  m_particle_emitter.Initialize(m_total_num_particles, ngl::Vec3(-8, -2, 0), 3, ngl::Vec3(0, 0, 0), 999999, 0.1);
     m_hashtable_size = findNextPrime(2* m_particle_emitter.m_particles.size());
   //m_particle_emitter.Emit();
   //shash::fillHashTable(m_hash_table, m_total_num_particles, m_particle_emitter.m_particles, m_sl);

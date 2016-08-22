@@ -37,132 +37,22 @@ void Emitter::Initialize(float _num_particles,  ngl::Vec3 _initial_pos, float _r
 //  }
   //std::cout<<"num ghost particles: "<< m_particles.size()<<std::endl;
 
-//  for(int i = 0; i < boundary_particles; i ++)
-//  {
-//    float size_rand = -10 + static_cast <float>(rand())/static_cast<float> (RAND_MAX/(20));
-//    int half_size = 20/2;
-//    Particle p(true);
-//    p.setGhost(true);
-//    p.setPosition(ngl::Vec3(size_rand, -half_size, -half_size));
-//    p.setInitPosition(ngl::Vec3(size_rand, -half_size, -half_size));
-//    p.setLifespan(_lifespan);
-//    p.setMass(_mass);
-//    p.setVelocity(_initial_vel);
-//    p.setInitVelocity(_initial_vel);
-//    m_particles.push_back(p);
-//  }
-
-//  for(int i = 0; i < boundary_particles; i ++)
-//  {
-//    float size_rand = -10 + static_cast <float>(rand())/static_cast<float> (RAND_MAX/(20));
-//    int half_size = 20/2;
-//    Particle p(true);
-//    p.setGhost(true);
-//    p.setPosition(ngl::Vec3(half_size, -half_size, size_rand));
-//    p.setInitPosition(ngl::Vec3(half_size, -half_size, size_rand));
-//    p.setLifespan(_lifespan);
-//    p.setMass(_mass);
-//    p.setVelocity(_initial_vel);
-//    p.setInitVelocity(_initial_vel);
-//    m_particles.push_back(p);
-//  }
-
-//  for(int i = 0; i < boundary_particles; i ++)
-//  {
-//    float size_rand = -10 + static_cast <float>(rand())/static_cast<float> (RAND_MAX/(20));
-//    int half_size = 20/2;
-//    Particle p(true);
-//    p.setGhost(true);
-//    p.setPosition(ngl::Vec3(-half_size, -half_size, size_rand));
-//    p.setInitPosition(ngl::Vec3(-half_size, -half_size, size_rand));
-//    p.setLifespan(_lifespan);
-//    p.setMass(_mass);
-//    p.setVelocity(_initial_vel);
-//    p.setInitVelocity(_initial_vel);
-//    m_particles.push_back(p);
-//  }
-
-//  for(int i = 0; i < boundary_particles; i ++)
-//  {
-//    float size_rand = -10 + static_cast <float>(rand())/static_cast<float> (RAND_MAX/(20));
-//    int half_size = 20/2;
-//    Particle p(true);
-//    p.setGhost(true);
-//    p.setPosition(ngl::Vec3(half_size, size_rand, half_size));
-//    p.setInitPosition(ngl::Vec3(half_size, size_rand, half_size));
-//    p.setLifespan(_lifespan);
-//    p.setMass(_mass);
-//    p.setVelocity(_initial_vel);
-//    p.setInitVelocity(_initial_vel);
-//    m_particles.push_back(p);
-//  }
-
-
-//  for(int i = 0; i < boundary_particles; i ++)
-//  {
-//    float size_rand = -10 + static_cast <float>(rand())/static_cast<float> (RAND_MAX/(20));
-//    int half_size = 20/2;
-//    Particle p(true);
-//    p.setGhost(true);
-//    p.setPosition(ngl::Vec3(-half_size, size_rand, -half_size));
-//    p.setInitPosition(ngl::Vec3(-half_size, size_rand, -half_size));
-//    p.setLifespan(_lifespan);
-//    p.setMass(_mass);
-//    p.setVelocity(_initial_vel);
-//    p.setInitVelocity(_initial_vel);
-//    m_particles.push_back(p);
-//  }
-
-
-//  for(int i = 0; i < boundary_particles; i ++)
-//  {
-//    float size_rand = -10 + static_cast <float>(rand())/static_cast<float> (RAND_MAX/(20));
-//    int half_size = 20/2;
-//    Particle p(true);
-//    p.setGhost(true);
-//    p.setPosition(ngl::Vec3(-half_size, size_rand, half_size));
-//    p.setInitPosition(ngl::Vec3(-half_size, size_rand, half_size));
-//    p.setLifespan(_lifespan);
-//    p.setMass(_mass);
-//    p.setVelocity(_initial_vel);
-//    p.setInitVelocity(_initial_vel);
-//    m_particles.push_back(p);
-//  }
-
-
-//  for(int i = 0; i < boundary_particles; i ++)
-//  {
-//    float size_rand = -10 + static_cast <float>(rand())/static_cast<float> (RAND_MAX/(20));
-//    int half_size = 20/2;
-//    Particle p(true);
-//    p.setGhost(true);
-//    p.setPosition(ngl::Vec3(half_size, size_rand, -half_size));
-//    p.setInitPosition(ngl::Vec3(half_size, size_rand, -half_size));
-//    p.setLifespan(_lifespan);
-//    p.setMass(_mass);
-//    p.setVelocity(_initial_vel);
-//    p.setInitVelocity(_initial_vel);
-//    m_particles.push_back(p);
-//  }
-
-
-
   for(int i = 0; i < _num_particles; i++)
   {
      ngl::Real theta_rand = 0 + static_cast <float>(rand())/static_cast<float> (RAND_MAX/(M_PI*2));
      ngl::Real y_theta_rand = 0 + static_cast <float>(rand())/static_cast<float> (RAND_MAX/(M_PI*2));
 
-     float x_radius_rand =  static_cast <float>(rand())/static_cast<float> (RAND_MAX/(_range/2));
+     float x_radius_rand =  _range + static_cast <float>(rand())/static_cast<float> (RAND_MAX/(_range/2));
      float y_radius_rand =  static_cast <float>(rand())/static_cast<float> (RAND_MAX/(_range*1.2));
-     float z_radius_rand =  -_range + static_cast <float>(rand())/static_cast<float> (RAND_MAX/(_range/2));
+     float z_radius_rand =  -(_range+2) + static_cast <float>(rand())/static_cast<float> (RAND_MAX/((_range+2)*2));
 
 
      ngl::Real x = ((float)cos(theta_rand))*x_radius_rand;
      ngl::Real z = ((float)sin(theta_rand))*x_radius_rand;
      ngl::Real y = ((float)cos(y_theta_rand))*x_radius_rand;
-     ngl::Vec3 init_pos = ngl::Vec3(_initial_pos.m_x + x, _initial_pos.m_y+y_radius_rand, _initial_pos.m_z + z);
+     ngl::Vec3 init_pos = ngl::Vec3(_initial_pos.m_x + x_radius_rand, _initial_pos.m_y+y_radius_rand, _initial_pos.m_z + z_radius_rand);
 
-    Particle p(false);
+    Particle p(true);
     p.setGhost(false);
     p.setPosition(init_pos);
     p.setPrevPosition(init_pos);
